@@ -17,7 +17,8 @@ C:/php/lampp-docker8/htdocs/
 
 **b1.** 変数名、列名、name属性名を統一
 - _,小文字,数字のみ、分かりやすい英語名
-    - 例）$sname(変数名),sname(列名),<imput type="text" name="sname">(属性名)
+    - 例）$sname(変数名),sname(列名),'<imput type="text" name="sname">'(属性名)
+
 **b2.** フォルダ名、ファイル名
 - フォルダ名：小文字4字以内
     - 例）src
