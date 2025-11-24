@@ -9,7 +9,7 @@ Model::setDbConf([
   ]);
 */
 $no_header_ouput =[
-    'usr_logout', 'usr_check', 'usr_save', 'rst_save', 'rev_save',
+    'user_logout', 'user_check', 'user_save', 'rst_save', 'rev_save',
 ];
 
 $do = $_GET['do'] ?? 'rst_list';
