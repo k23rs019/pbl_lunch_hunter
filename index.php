@@ -18,5 +18,5 @@ if(in_array($do, $no_header_ouput)){
 } else {
     include "src/pg_header.php";
     include "src/{$do}.php";
-    include "src/pg_foter.php";
+    include "src/pg_footer.php";
 }
