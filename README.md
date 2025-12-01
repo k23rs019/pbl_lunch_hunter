@@ -27,13 +27,16 @@ C:/php/lampp-docker8/htdocs/
 
 
 #### **c.** データベース検索用コード一覧
--require_once('model.php');必須コード
+
+**必須コード**
+-require_once('model.php');
 
 -$model = new User(); 利用したいデータに応じた宣言
     -ユーザの場合->$model = new User()
     -店舗の場合->$model = new Restaurant()
     -口コミの場合->$model = new Review()
 
+**データ検索用コード**
 -getList(): 特定のテーブルに対し一覧表示用データを検索し結果をすべて返す
 
 -getDetail(): 特定のテーブルに対して詳細表示用データを検索し１件のみ返す
