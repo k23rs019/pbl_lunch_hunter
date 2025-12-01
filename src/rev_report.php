@@ -19,6 +19,9 @@ $reports = [
     ]
 ];
 ?>
+
+<?php include('pg_header.php'); ?>
+
 <!DOCTYPE html>
 <html lang="jp">
 <head>
@@ -71,3 +74,4 @@ $reports = [
 
 </body>
 </html>
+<?php include('pg_footer.php'); ?>
