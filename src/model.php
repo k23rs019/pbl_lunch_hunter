@@ -108,3 +108,23 @@ class Model
         return $this->db->affected_rows;
     }
 }
+
+class User extends Model
+{
+    protected $table = "t_user";
+    
+    function auth($uid, $upass)
+    {
+        return $this->getDetail("uid='{$uid}' AND upass='{$upass}'");
+    }
+}
+
+class Restaurant extends Model
+{
+    protected $table = "t_rstinfo";
+}
+
+class Review extends Model
+{
+    protected $table = "t_review";
+}
