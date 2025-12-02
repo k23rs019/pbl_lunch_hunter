@@ -8,7 +8,7 @@ $reports = array(
         '通報理由'=> '写真',
         'コメント'=> '店主が臭い',
         '通報者'=> '九尾 太郎',
-        '本名'=> '美輪 明宏',
+        '投稿主'=> '美輪 明宏',
     ],
     [
         'id'=> '2',
@@ -18,13 +18,13 @@ $reports = array(
         '通報理由'=> 'コメント',
         'コメント'=> 'コメント一部',
         '通報者'=> '通報者',
-        '本名'=> '投稿主',
+        '投稿主'=> '投稿主',
     ] 
 );
 ?>
 
 <!DOCTYPE html>
-<html lang="jp">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -47,7 +47,7 @@ $reports = array(
     <section class="report-box">
 
         <div class="left">
-            <h3><?php echo htmlspecialchars($report[0]['アカウント名']) ?></h3>
+            <h3><?php echo htmlspecialchars($report['アカウント名']) ?></h3>
 
             <div class="star">
                 <p>評価：<?php echo $report['評価点']?></p>
@@ -60,7 +60,7 @@ $reports = array(
 
             <div class="small">
                 <p>投稿主：<?php echo htmlspecialchars($report['通報者']) ?></p><br>
-                <p>通報者：<?php echo htmlspecialchars($report['本名']) ?></p>
+                <p>通報者：<?php echo htmlspecialchars($report['投稿主']) ?></p>
             </div>
         </div>
 
