@@ -46,26 +46,26 @@ $reports = [
 <section class="report-box">
 
     <div class="left">
-        <h3><?php htmlspecialchars($r['アカウント名']) ?></h3>
+        <h3><?php echo htmlspecialchars($r['アカウント名']) ?></h3>
 
         <div class="star">
             <p>評価：<?php echo $r['評価点']?></p>
             <?php for ($i = 1; $i <= 5; $i++): ?>
-                <?php $r<=$r['評価点'] ? "★" : "☆" ?>
+                <?php $i<=$r['評価点'] ? "★" : "☆" ?>
             <?php endfor; ?>
         </div>
 
-        <p><?php htmlspecialchars($r['コメント']) ?></p>
+        <p><?php echo htmlspecialchars($r['コメント']) ?></p>
 
         <div class="small">
-            <p>投稿主：<?php htmlspecialchars($r['通報者']) ?></p><br>
-            <p>通報者：<?php htmlspecialchars($r['本名']) ?></p>
+            <p>投稿主：<?php echo htmlspecialchars($r['通報者']) ?></p><br>
+            <p>通報者：<?php echo htmlspecialchars($r['本名']) ?></p>
         </div>
     </div>
 
     <div class="right">
-        <h3>#<?php htmlspecialchars($r['ジャンル']) ?></h3>
-        <p>通報内容：<?php htmlspecialchars($r['通報理由']) ?></p>
+        <h3>#<?php echo htmlspecialchars($r['ジャンル']) ?></h3>
+        <p>通報内容：<?php echo htmlspecialchars($r['通報理由']) ?></p>
 
         <!-- 遷移ボタン（ID を URL パラメータとして渡す） -->
         <button type="button" onclick="location.href='detail.php?id=<?php $r['id'] ?>'">詳細</button>
