@@ -26,13 +26,13 @@
                 <div class="form-group">
                     <label>定休日</label>
                     <span class="required-star">*必須</span><br>
-                    <label><input type="checkbox" name="holiday[]" value="日"> 日</label>
-                    <label><input type="checkbox" name="holiday[]" value="月"> 月</label>
-                    <label><input type="checkbox" name="holiday[]" value="火"> 火</label>
-                    <label><input type="checkbox" name="holiday[]" value="水"> 水</label>
-                    <label><input type="checkbox" name="holiday[]" value="木"> 木</label>
-                    <label><input type="checkbox" name="holiday[]" value="金"> 金</label>
-                    <label><input type="checkbox" name="holiday[]" value="土"> 土</label>
+                    <label><input type="checkbox" name="holiday[]" value=1> 日</label>
+                    <label><input type="checkbox" name="holiday[]" value=2> 月</label>
+                    <label><input type="checkbox" name="holiday[]" value=4> 火</label>
+                    <label><input type="checkbox" name="holiday[]" value=8> 水</label>
+                    <label><input type="checkbox" name="holiday[]" value=16> 木</label>
+                    <label><input type="checkbox" name="holiday[]" value=32> 金</label>
+                    <label><input type="checkbox" name="holiday[]" value=64> 土</label>
                     <label><input type="checkbox" name="holiday[]" value="年中無休"> 年中無休</label>
                     <label><input type="checkbox" name="holiday[]" value="未定"> 未定</label>
                 </div>
