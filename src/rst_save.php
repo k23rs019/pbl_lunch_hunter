@@ -9,7 +9,8 @@ if(empty($_POST['rst_name'])
 || empty($_POST['start_time'])
 || empty($_POST['end_time'])
 || empty($_POST['tel_num']) 
-|| empty($_POST['rst_holiday']))
+|| empty($_POST['rst_holiday'])
+|| empty($_POST['rst_genre']))
 {
     $error = true;
 }
@@ -36,6 +37,9 @@ if(!$error){
 
     // データ登録
     $rows = $rst_save->insert($data);
+    $genre = $_POST['rst_genre'];
+    $rst_id = $rst_save->getDetail(["'rst_name' = '{$data['rst_name']}'"]);
+    $rows = $rst_save->save_genre($rst_id,$genre);
     // 登録成功か判定
     if($rows > 0){
         $_SESSION['message'] = "店舗が登録されました。";

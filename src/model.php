@@ -174,6 +174,11 @@ class User extends Model
 class Restaurant extends Model
 {
     protected $table = "t_rstinfo";
+    function save_genre($rst_id,$genres){
+        foreach($genres as $genre){
+            return $this -> insert([$rst_id,$genre]);
+        }
+    }
 }
 
 class Review extends Model
