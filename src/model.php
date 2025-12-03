@@ -116,19 +116,6 @@ class User extends Model
     {
         return $this->getDetail("uid='{$uid}' AND upass='{$upass}'");
     }
-    
-    function get_Userdetail($where){
-        $user = $this->getDetail($where);
-        if(empty($user)) return [];
-        $usertype_id = $user['usertype_id'];
-
-        $sql = "SELECT usertype FROM t_usertype WHERE usertype_id={$usertype_id}";
-        $result = $this->query($sql);
-        
-        $usertype = $result['usertype'] ?? '不明';
-        $user['usertype'] = $usertype;
-        return $user;
-    }
     function username($user){
         $username = "{$user['user_l_name']}_{$user['user_f_name']}";
         return $username;
@@ -137,7 +124,31 @@ class User extends Model
         $userkana = "{$user['user_l_kana']}_{$user['user_f_kana']}";
         return $userkana;
     }
-    
+    function get_Userdetail($where){
+        $user = $this->getDetail($where);
+        if(empty($user)) return [];
+        $usertype_id = $user['usertype_id'];
+
+        $sql = "SELECT usertype FROM t_usertype WHERE usertype_id={$usertype_id}";
+        $result = $this->query($sql);
+        
+        $usertype = $result[0]['usertype'] ?? '不明';
+        $user['usertype'] = $usertype;
+        $user['username'] = $this->username($user);
+        $user['userkana'] = $this->userkana($user);
+        return $user;
+    }
+    function get_userlist($where=1, $orderby=null, $limit=0, $offset=0){
+        $sql = "SELECT * FROM t_user NATURAL JOIN t_usertype WHERE {$where}";
+        $users =  $this->query($sql,$orderby, $limit, $offset);
+        foreach($users as &$user){
+            $user['username'] = $this->username($user);
+            $user['userkana'] = $this->userkana($user);
+        }
+        unset($user);
+        
+        return $users;
+    }
 }
 
 class Restaurant extends Model
