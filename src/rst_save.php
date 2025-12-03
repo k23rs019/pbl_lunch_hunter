@@ -37,7 +37,6 @@ if(!$error){
 
     // データ登録
     $rows = $rst_save->insert($data);
-
     // 登録成功か判定
     if($rows > 0){
         $_SESSION['message'] = "店舗が登録されました。";
