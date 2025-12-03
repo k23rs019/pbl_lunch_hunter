@@ -23,8 +23,27 @@ $shops=array(
     'ジャンル'=>'いいい',
     '0'=>'割引有',
     '1'=>'割引無',
+    ],
+    [
+    '店舗名'=>'あああ',
+    '評価'=>'1',
+    'ジャンル'=>'いいい',
+    '0'=>'割引有',
+    '1'=>'割引無',
     ]
 );
+
+$perPage = 6; 
+$total = count($shops);
+$totalPages = ceil($total / $perPage); // 総ページ数
+
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
+if ($page > $totalPages) $page = $totalPages;
+
+$start = ($page - 1) * $perPage; 
+$showShops = array_slice($shops, $start, $perPage);
+
 ?>
 
 <!DOCTYPE html>
@@ -91,5 +110,14 @@ $shops=array(
         </div>
     </div>
 <?php endforeach; ?>
+<div class="pagination">
+    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+        <?php if ($i == $page): ?>
+            <span class="current"><?= $i ?></span>
+        <?php else: ?>
+            <a href="?page=<?= $i ?>"><?= $i ?></a>
+        <?php endif; ?>
+    <?php endfor; ?>
+</div>
 </body>
 </html>
