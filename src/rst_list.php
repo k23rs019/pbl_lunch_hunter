@@ -1,4 +1,8 @@
 <?php
+if(isset($_SESSION['message'])){
+    echo "<p style='color:green'>{$_SESSION['message']}</p>";
+    unset($_SESSION['message']);
+}
 // モックデータ（本来はDBから取得）
 $stores = [
     ['name'=>'丸亀製麺 九産大前店','genres'=>['うどん','和食'],'discount'=>true,'favorite'=>true,'rating'=>4.0,'tags'=>['#うどん','#和食'],'registered_by'=>'九州男児','created_at'=>'2025-11-28'],
