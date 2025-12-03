@@ -43,7 +43,7 @@ if(!$error){
     } else {
         $_SESSION['message'] = "登録に失敗しました。";
     }
-
+    
     // 登録結果ページまたは一覧ページへ遷移
     header('Location: rst_list.php');
     exit();
