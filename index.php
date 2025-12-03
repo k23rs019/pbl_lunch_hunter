@@ -5,7 +5,7 @@ require_once 'src/model.php';
 
 // データベースの接続情報
 Model::setDbConf([
-    'host'=>'mysql', 'user'=>'root','pass'=>'root','dbname'=>'pbl2025db'
+    'host'=>'mysql', 'user'=>'root','pass'=>'root','dbname'=>'pbl2025web2db'
   ]);
 */
 $no_header_ouput =[
