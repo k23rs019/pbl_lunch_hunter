@@ -6,7 +6,7 @@
         echo '<h2 style="color:red">必須項目が未入力です</h2>';
     }
     ?>
-    <form action="rst_save.php" method="post" enctype="multipart/form-data">
+    <form action="?do=rst_save" method="post" enctype="multipart/form-data">
 
         <div class="registration-container">
 
