@@ -54,7 +54,7 @@ $reports = array(
 </head>
 <body>
 
-<h1>通報済み口コミ一覧表示</h1>
+<h1 class="report_title">通報済み口コミ一覧表示</h1>
 
 <div class="top-btn">
     <button type="button">通報取り消し一覧</button>
@@ -64,7 +64,7 @@ $reports = array(
 
 
 <div id="reportArea">
-<?php foreach ($sortedreports as $report): ?>
+<?php foreach ($reports as $report): ?>
     <section class="report-box">
 
         <div class="left">
@@ -89,8 +89,8 @@ $reports = array(
             <h3>#<?php echo htmlspecialchars($report['ジャンル']) ?></h3>
             <p>通報内容：<?php echo htmlspecialchars($report['通報理由']) ?></p>
 
-            <button type="button" onclick="location.href='detail.php?id=<?php echo $report['id']?? 0 ?>'">詳細</button>
-            <button type="button" onclick="location.href='cancel.php?id=<?php echo $report['id']?? 0 ?>'">取り消し</button>
+            <button type="button" onclick="location.href='/src/rev_detail.php'">詳細</button>
+            <button type="button" onclick="location.href='cancel.php'">取り消し</button>
             <button class="btn0" popovertarget="my">削除</button>
             
             <div class="pop" popover="manual" id="my">
