@@ -94,7 +94,15 @@ main { max-width:1000px; margin:20px auto; padding:0 15px; }
 </style>
 </head>
 <body>
-
+<header>
+  <div class="left"><a href="#">ログアウト</a></div>
+  <div class="right">
+    <a href="#">MY PAGE</a>
+    <a href="#">店舗一覧</a>
+    <a href="#">店舗登録</a>
+    <a href="#">店舗検索</a>
+  </div>
+</header>
 <main>
   <!-- 検索フォーム -->
   <div class="search-box">

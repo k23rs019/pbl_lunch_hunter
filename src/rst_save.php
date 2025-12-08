@@ -44,9 +44,9 @@ if(!$error){
         'rst_holiday'=> $holiday,
         'rst_genre'=> $genre,
         'rst_pay'=> $pay,
-        'rst_url'=> $_POST['url'] ?? null,
-        'photo_file'=> $photo_file,
-        'user_id'=> $_POST['user_id'] ?? 1,
+        'rst_'=> $_POST['url'] ?? null,
+        'photo'=> $photo_file,
+        'user_id'=> $_POST['user_id'],
         'discount'=> 0
     ];
 
