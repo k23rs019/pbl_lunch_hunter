@@ -1,7 +1,5 @@
 <?php
-session_start();
-$user_id = $_SESSION['user_id'] ?? 'u001'; // 仮のログインユーザーID
-$user_name = $_SESSION['user_name'] ?? '智悠'; // 仮の表示名
+
 
 // 仮の店舗データ
 $store = [
