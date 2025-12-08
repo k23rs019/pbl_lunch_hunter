@@ -1,6 +1,10 @@
 <?php
-$user_id   = $_GET['user_id'] ?? '';
-$user_name = $_POST['user_name'] ?? '';
+session_start();
+
+// ログイン情報（仮）
+$user_id   = $_SESSION['user_id'] ?? ($_GET['user_id'] ?? '');
+$user_name = $_SESSION['user_name'] ?? '';
+$is_admin  = $_SESSION['is_admin'] ?? false; // 管理者フラグ
 
 // 仮の店舗データ（owner_idを追加）
 $store = [
@@ -83,7 +87,8 @@ foreach ($reviews as $r) {
       <p><?= $review_stars ?>（<?= $review_avg ?> / 5、<?= $review_count ?>件）</p>
     </div>
 
-    <!-- あなたの口コミ（常にカード形式で表示） -->
+    <!-- あなたの口コミ（管理者は非表示） -->
+    <?php if (!$is_admin): ?>
     <div class="section">
       <h3>あなたの口コミ</h3>
       <div class="review_card">
@@ -123,6 +128,7 @@ foreach ($reviews as $r) {
         <?php endif; ?>
       </div>
     </div>
+    <?php endif; ?>
 
     <!-- 他人の口コミ一覧 -->
     <div class="section">
