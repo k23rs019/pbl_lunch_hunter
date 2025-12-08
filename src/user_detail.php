@@ -1,31 +1,40 @@
 <?php
-// 仮の店舗データ
-$store = [
-  'store_name' => '九段製麺 九産大前店',
-  'address' => '福岡県福岡市東区香住ヶ丘２丁目２−４',
-  'tel' => '092-410-2885',
-  'hours' => '11:00〜15:00',
-  'holiday' => '不定休',
-  'parking' => 'なし',
-  'payment' => '現金 クレジットカード',
-  'url' => 'https://www.example.com',
-  'photo' => 'photo_sample.jpg'
-];
+require_once('model.php');
 
-// 仮の口コミデータ
-$reviews = [
-  ['account_name' => '社員A', 'rating' => 5, 'comment' => 'とても美味しかったです！', 'photo' => 'ramen.jpg'],
-  ['account_name' => '社員B', 'rating' => 4, 'comment' => '接客が丁寧でした。', 'photo' => 'gyoza.jpg'],
-  ['account_name' => '社員C', 'rating' => 3, 'comment' => '値段が少し高めでした。', 'photo' => '']
-];
+// 店舗情報取得用
+$model_store = new Restaurant();
+// 口コミ情報取得用
+$model_review = new Review();
+
+session_start();
+
+// ロールを仮定（本来はログイン時に設定）
+$role = $_SESSION['role'] ?? 'employee'; // 'employee' or 'admin'
+
+// 店舗IDをGETで受け取る
+$store_id = $_GET['store_id'] ?? null;
+if (!$store_id) {
+    echo "<p>店舗IDが指定されていません。</p>";
+    exit;
+}
+
+// 店舗情報を取得
+$store = $model_store->getDetail("store_id='" . $store_id . "'");
+
+// 口コミ一覧を取得
+$reviews = $model_review->getList("store_id='" . $store_id . "'");
 
 // 総合評価の平均を算出
 $total_rating = 0;
-foreach ($reviews as $r) {
-  $total_rating += $r['rating'];
-}
 $review_count = count($reviews);
-$review_avg = $review_count > 0 ? round($total_rating / $review_count, 1) : 0;
+if ($review_count > 0) {
+    foreach ($reviews as $r) {
+        $total_rating += $r['rating'];
+    }
+    $review_avg = round($total_rating / $review_count, 1);
+} else {
+    $review_avg = 0;
+}
 $review_stars = str_repeat('★', floor($review_avg)) . str_repeat('☆', 5 - floor($review_avg));
 ?>
 <!DOCTYPE html>
@@ -40,6 +49,7 @@ $review_stars = str_repeat('★', floor($review_avg)) . str_repeat('☆', 5 - fl
     label { font-weight: bold; display: block; margin-top: 10px; }
     img { max-width: 100%; height: auto; margin-top: 10px; }
     .review_card { border: 1px solid #ccc; padding: 10px; margin-top: 10px; border-radius: 5px; }
+    .admin_action { background: #fee; padding: 10px; margin-top: 10px; border: 1px solid #f00; }
   </style>
 </head>
 <body>
@@ -47,16 +57,16 @@ $review_stars = str_repeat('★', floor($review_avg)) . str_repeat('☆', 5 - fl
     <!-- 店舗情報 -->
     <div class="section">
       <h2>店舗詳細</h2>
-      <p><strong>店舗名：</strong><?= $store['store_name'] ?></p>
-      <p><strong>住所：</strong><?= $store['address'] ?></p>
-      <p><strong>電話番号：</strong><?= $store['tel'] ?></p>
-      <p><strong>営業時間：</strong><?= $store['hours'] ?></p>
-      <p><strong>定休日：</strong><?= $store['holiday'] ?></p>
-      <p><strong>駐車場：</strong><?= $store['parking'] ?></p>
-      <p><strong>支払方法：</strong><?= $store['payment'] ?></p>
-      <p><strong>URL：</strong><a href="<?= $store['url'] ?>" target="_blank">公式サイト</a></p>
+      <p><strong>店舗名：</strong><?= htmlspecialchars($store['store_name']) ?></p>
+      <p><strong>住所：</strong><?= htmlspecialchars($store['address']) ?></p>
+      <p><strong>電話番号：</strong><?= htmlspecialchars($store['tel']) ?></p>
+      <p><strong>営業時間：</strong><?= htmlspecialchars($store['hours']) ?></p>
+      <p><strong>定休日：</strong><?= htmlspecialchars($store['holiday']) ?></p>
+      <p><strong>駐車場：</strong><?= htmlspecialchars($store['parking']) ?></p>
+      <p><strong>支払方法：</strong><?= htmlspecialchars($store['payment']) ?></p>
+      <p><strong>URL：</strong><a href="<?= htmlspecialchars($store['url']) ?>" target="_blank">公式サイト</a></p>
       <p><strong>外見写真：</strong></p>
-      <img src="<?= $store['photo'] ?>" alt="店舗外観">
+      <img src="<?= htmlspecialchars($store['photo'] ?? 'default.jpg') ?>" alt="店舗外観">
     </div>
 
     <!-- 総合評価 -->
@@ -65,42 +75,58 @@ $review_stars = str_repeat('★', floor($review_avg)) . str_repeat('☆', 5 - fl
       <p><?= $review_stars ?>（<?= $review_avg ?> / 5、<?= $review_count ?>件）</p>
     </div>
 
-    <!-- 投稿フォーム -->
-    <div class="section">
-      <h3>コメント投稿</h3>
-      <form method="post" enctype="multipart/form-data">
-        <label for="comment">コメント（250文字以内）</label>
-        <textarea id="comment" name="comment" maxlength="250"></textarea>
+    <!-- 社員用：コメント投稿フォーム -->
+    <?php if ($role === 'employee'): ?>
+      <div class="section">
+        <h3>コメント投稿</h3>
+        <form method="post" enctype="multipart/form-data">
+          <label for="comment">コメント（250文字以内）</label>
+          <textarea id="comment" name="comment" maxlength="250"></textarea>
 
-        <label for="photo">写真（任意）</label>
-        <input type="file" id="photo" name="photo">
+          <label for="photo">写真（任意）</label>
+          <input type="file" id="photo" name="photo">
 
-        <label for="rating">評価（1〜5）</label>
-        <select id="rating" name="rating">
-          <option value="1">★☆☆☆☆</option>
-          <option value="2">★★☆☆☆</option>
-          <option value="3">★★★☆☆</option>
-          <option value="4">★★★★☆</option>
-          <option value="5">★★★★★</option>
-        </select>
+          <label for="rating">評価（1〜5）</label>
+          <select id="rating" name="rating">
+            <option value="1">★☆☆☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="4">★★★★☆</option>
+            <option value="5">★★★★★</option>
+          </select>
 
-        <button type="submit" name="submit_review">投稿</button>
-      </form>
-    </div>
+          <button type="submit" name="submit_review">投稿</button>
+        </form>
+      </div>
+    <?php endif; ?>
 
     <!-- 口コミ一覧 -->
     <div class="section">
       <h3>口コミ</h3>
-      <?php foreach ($reviews as $r): ?>
-        <div class="review_card">
-          <p><strong>アカウント：</strong><?= $r['account_name'] ?></p>
-          <p><strong>評価：</strong><?= str_repeat('★', $r['rating']) ?><?= str_repeat('☆', 5 - $r['rating']) ?></p>
-          <p><strong>コメント：</strong><?= $r['comment'] ?></p>
-          <?php if (!empty($r['photo'])): ?>
-            <img src="<?= $r['photo'] ?>" alt="料理写真">
-          <?php endif; ?>
-        </div>
-      <?php endforeach; ?>
+      <?php if ($review_count > 0): ?>
+        <?php foreach ($reviews as $r): ?>
+          <div class="review_card">
+            <p><strong>アカウント：</strong><?= htmlspecialchars($r['account_name']) ?></p>
+            <p><strong>評価：</strong><?= str_repeat('★', $r['rating']) ?><?= str_repeat('☆', 5 - $r['rating']) ?></p>
+            <p><strong>コメント：</strong><?= htmlspecialchars($r['comment']) ?></p>
+            <?php if (!empty($r['photo'])): ?>
+              <img src="<?= htmlspecialchars($r['photo']) ?>" alt="料理写真">
+            <?php endif; ?>
+
+            <!-- 管理者用：非表示ボタン -->
+            <?php if ($role === 'admin'): ?>
+              <div class="admin_action">
+                <form method="post">
+                  <input type="hidden" name="review_id" value="<?= htmlspecialchars($r['review_id']) ?>">
+                  <button type="submit" name="hide_review">口コミを非表示にする</button>
+                </form>
+              </div>
+            <?php endif; ?>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <p>口コミはまだありません。</p>
+      <?php endif; ?>
     </div>
   </div>
 </body>
