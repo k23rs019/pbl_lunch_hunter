@@ -52,13 +52,14 @@ if(!$error){
     $rows = $rst_save->insert($data);
 
     // 登録した店舗のIDを取得
-    $rst_detail = $rst_save->getDetail(['rst_name' => $data['rst_name']]);
+    $rst_detail = $rst_save->get_RstDetail(['rst_name' => $data['rst_name']]);
     $rst_id = $rst_detail['rst_id'] ?? null;
 
+    $genre_save = new Genre();
     // ジャンル保存
     $genre_array = $_POST['genre'] ?? [];
     if($rst_id !== null){
-        $rows = $rst_save->save_genre($rst_id, $genre_array);
+        $rows = $genre_save->save_genre($rst_id, $genre_array);
     }
 
     // 結果メッセージ
