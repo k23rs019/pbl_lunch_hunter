@@ -29,16 +29,15 @@ $review_count = count($reviews);
 $review_avg = $review_count > 0 ? round($total_rating / $review_count, 1) : 0;
 $review_stars = str_repeat('★', floor($review_avg)) . str_repeat('☆', 5 - floor($review_avg));
 
-// メッセージ処理（仮）
-$message = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  if (isset($_POST['submit_review'])) {
-    $message = '口コミを投稿しました。';
-  } elseif (isset($_POST['delete_review'])) {
-    $message = '口コミを削除しました。';
-  } elseif (isset($_POST['report_review'])) {
-    $message = '口コミを通報しました。';
-  }
+// 自分の口コミを抽出
+$my_review = null;
+$other_reviews = [];
+foreach ($reviews as $r) {
+    if ($r['user_id'] === $user_id) {
+        $my_review = $r;
+    } else {
+        $other_reviews[] = $r;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -51,14 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .container { max-width: 900px; margin: auto; }
     .section { margin-bottom: 30px; }
     .review_card { border: 1px solid #ccc; padding: 10px; margin-top: 10px; border-radius: 5px; }
-    .message { color: green; font-weight: bold; }
-    .warning { color: red; }
   </style>
-  <script>
-    function confirmPost() {
-      return confirm('口コミを投稿してよろしいですか？');
-    }
-  </script>
 </head>
 <body>
   <div class="container">
@@ -87,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- 投稿フォーム -->
     <div class="section">
       <h3>コメント投稿</h3>
-      <form method="post" enctype="multipart/form-data" onsubmit="return confirmPost();">
+      <form method="post" enctype="multipart/form-data">
         <label for="comment">コメント（250文字以内）</label>
         <textarea id="comment" name="comment" maxlength="250"></textarea>
 
@@ -106,34 +98,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" name="submit_review">投稿</button>
         <button type="submit" name="delete_review">投稿削除</button>
       </form>
+
+      <!-- 自分の口コミを投稿フォーム直下に表示 -->
+      <?php if ($my_review): ?>
+        <div class="review_card">
+          <p><strong>あなたの口コミ：</strong></p>
+          <p><strong>評価：</strong><?= str_repeat('★', $my_review['rating']) ?><?= str_repeat('☆', 5 - $my_review['rating']) ?></p>
+          <p><strong>コメント：</strong><?= htmlspecialchars($my_review['comment']) ?></p>
+          <?php if (!empty($my_review['photo'])): ?>
+            <img src="<?= htmlspecialchars($my_review['photo']) ?>" alt="あなたの写真">
+          <?php endif; ?>
+          <form method="post">
+            <input type="hidden" name="review_id" value="<?= $my_review['review_id'] ?>">
+            <button type="submit" name="edit_review">編集</button>
+            <button type="submit" name="delete_review">削除</button>
+          </form>
+        </div>
+      <?php endif; ?>
     </div>
 
-    <!-- メッセージ表示 -->
-    <?php if (!empty($message)): ?>
-      <p class="message"><?= $message ?></p>
-    <?php endif; ?>
-
-    <!-- 口コミ一覧 -->
+    <!-- 他人の口コミ一覧 -->
     <div class="section">
-      <h3>口コミ</h3>
-      <?php foreach ($reviews as $r): ?>
-        <div class="review_card">
-          <p><strong>アカウント：</strong><?= $r['account_name'] ?></p>
-          <p><strong>評価：</strong><?= str_repeat('★', $r['rating']) ?><?= str_repeat('☆', 5 - $r['rating']) ?></p>
-          <p><strong>コメント：</strong><?= $r['comment'] ?></p>
-          <?php if (!empty($r['photo'])): ?>
-            <img src="<?= $r['photo'] ?>" alt="写真">
-          <?php endif; ?>
-
-          <!-- 自分の投稿なら編集・削除 -->
-          <?php if ($r['user_id'] === $user_id): ?>
-            <form method="post">
-              <input type="hidden" name="review_id" value="<?= $r['review_id'] ?>">
-              <button type="submit" name="edit_review">編集</button>
-              <button type="submit" name="delete_review">削除</button>
-            </form>
-          <?php else: ?>
-            <!-- 他人の投稿なら通報 -->
+      <h3>他の口コミ</h3>
+      <?php if (!empty($other_reviews)): ?>
+        <?php foreach ($other_reviews as $r): ?>
+          <div class="review_card">
+            <p><strong>アカウント：</strong><?= htmlspecialchars($r['account_name']) ?></p>
+            <p><strong>評価：</strong><?= str_repeat('★', $r['rating']) ?><?= str_repeat('☆', 5 - $r['rating']) ?></p>
+            <p><strong>コメント：</strong><?= htmlspecialchars($r['comment']) ?></p>
+            <?php if (!empty($r['photo'])): ?>
+              <img src="<?= htmlspecialchars($r['photo']) ?>" alt="写真">
+            <?php endif; ?>
             <form method="post">
               <input type="hidden" name="review_id" value="<?= $r['review_id'] ?>">
               <label for="reason">通報理由：</label>
@@ -144,9 +139,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </select>
               <button type="submit" name="report_review">通報</button>
             </form>
-          <?php endif; ?>
-        </div>
-      <?php endforeach; ?>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <p>他の口コミはまだありません。</p>
+      <?php endif; ?>
     </div>
   </div>
 </body>
