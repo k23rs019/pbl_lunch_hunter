@@ -122,59 +122,6 @@ class User extends Model
     {
         return $this->getDetail("uid='{$uid}' AND upass='{$upass}'");
     }
-    //姓名結合
-    function username($user){
-        $username = "{$user['user_l_name']} {$user['user_f_name']}";
-        return $username;
-    }
-    //フリガナ結合
-    function userkana($user){
-        $userkana = "{$user['user_l_kana']} {$user['user_f_kana']}";
-        return $userkana;
-    }
-    //ユーザ詳細
-    function get_Userdetail($where){
-        $user = $this->getDetail($where);
-        if(empty($user)) return [];
-        $usertype_id = $user['usertype_id'];
-
-        $sql = "SELECT usertype FROM t_usertype WHERE usertype_id={$usertype_id}";
-        $result = $this->query($sql);
-        
-        $usertype = $result[0]['usertype'] ?? '不明';
-        $user['usertype'] = $usertype;
-        $user['username'] = $this->username($user);
-        $user['userkana'] = $this->userkana($user);
-        return $user;
-    }
-    //ユーザリスト
-    function get_userlist($where=1, $orderby=null, $limit=0, $offset=0){
-        $sql = "SELECT * FROM t_user NATURAL JOIN t_usertype WHERE {$where}";
-        $users =  $this->query($sql,$orderby, $limit, $offset);
-
-        return $users;
-    }
-    //お気に入り店舗
-    function get_favorite($user_id){
-        $sql = "SELECT rst_id FROM t_favorite WHERE user_id = {$user_id}";
-        $favorites = $this ->query($sql);
-        $favorite=[];
-        foreach($favorites as $fav){
-            $rst_id = $fav['rst_id'];
-            $sql = "SELECT * FROM t_rstinfo WHERE rst_id = {$rst_id}";
-            $result = $this -> query($sql);
-            if(!empty($result)){
-                $favorite[] = $result[0];
-            }
-        }
-        return $favorite;
-    }
-    //Myリスト
-    function get_mylist($table,$user_id){
-        $sql = "SELECT * FROM {$table} WHERE user_id = {$user_id}";
-        $mylist = $this ->query($sql);
-        return $mylist;
-    }
 }
 
 class Restaurant extends Model
@@ -185,9 +132,4 @@ class Restaurant extends Model
 class Review extends Model
 {
     protected $table = "t_review";
-}
-
-class Report extends Model
-{
-    protected $table = "t_report";
 }
