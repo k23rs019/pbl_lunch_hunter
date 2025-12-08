@@ -4,34 +4,40 @@ require_once 'model.php';
 $error = false;
 
 // 必須項目チェック
-if(empty($_POST['rst_name'])
-|| empty($_POST['rst_address'])
-|| empty($_POST['start_time'])
-|| empty($_POST['end_time'])
-|| empty($_POST['tel_num']) 
-|| empty($_POST['rst_holiday'])
-|| empty($_POST['rst_genre']))
+if(empty($_POST['store_name'])
+|| empty($_POST['address'])
+|| empty($_POST['open_time'])
+|| empty($_POST['close_time'])
+|| empty($_POST['tel_part1']) 
+|| empty($_POST['tel_part2'])
+|| empty($_POST['tel_part3'])
+|| empty($_POST['holiday'])
+|| empty($_POST['genre']))
 {
     $error = true;
 }
 
+$tel_num = $_POST['tel_part1'] . $_POST['tel_part2'] . $_POST['tel_part3'];
+
 if(!$error){
     $rst_save = new Restaurant();
-
     // 定休日を合計
-    $holiday = array_sum($_POST['rst_holiday'] ?? []);
+    $holiday = array_sum($_POST['holiday'] ?? []);
+
+    $genre = array_sum($_POST['genre'] ?? []);
 
     $data = [
-        'rst_name'=> $_POST['rst_name'],
-        'rst_address'=> $_POST['rst_address'],
-        'start_time'=> $_POST['start_time'],
-        'end_time'=> $_POST['end_time'],
-        'tel_num'=> $_POST['tel_num'],
+        'rst_name'=> $_POST['store_name'],
+        'rst_address'=> $_POST['address'],
+        'start_time'=> $_POST['open_time'],
+        'end_time'=> $_POST['close_time'],
+        'tel_num'=> $tel_num,
         'rst_holiday'=> $holiday,
-        'rst_pay'=> isset($_POST['rst_pay']) ? array_sum($_POST['rst_pay']) : null,
-        'rst_info'=> $_POST['rst_info'] ?? null,
+        'rst_genre'=> $genre,
+        'rst_pay'=> isset($_POST['payment']) ? array_sum($_POST['payment']) : null,
+        'rst_url'=> $_POST['url'] ?? null,
         'photo_file'=> $_POST['photo_file'] ?? null,
-        'user_id'=> $_POST['user_id'],
+        'user_id'=> $_POST['user_id'] ?? 1,
         'discount'=> false
     ];
 

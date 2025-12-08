@@ -54,6 +54,38 @@ $reports = array(
 </head>
 <body>
 
+<style>
+    h1{
+        text-align: center;
+    }
+    .top-btn{
+        margin-left:80%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px; /* ボタンの間隔 */
+
+    }
+    .report-box{
+        display: flex;
+        padding: 20px;
+        border: 0.5px solid;
+        border-radius: 10px;
+        margin:10px;
+        gap:20%;
+    }
+    .star{
+        display: flex;
+        background-color: red;
+    }
+
+    .kome{
+        border:0.5px solid;
+    }
+
+
+</style>
+
+
 <h1 class="report_title">通報済み口コミ一覧表示</h1>
 
 <div class="top-btn">
@@ -71,13 +103,14 @@ $reports = array(
             <h3><?php echo htmlspecialchars($report['アカウント名']) ?></h3>
 
             <div class="star">
-                <p>評価：<?php echo $report['評価点']?></p>
+                <div>評価：</div>
                 <?php for ($i = 1; $i <= 5; $i++): ?>
                     <?php echo $i<=(int)$report['評価点'] ? "★" : "☆" ?>
                 <?php endfor; ?>
+                <div><?php echo $report['評価点']?></div>
             </div>
 
-            <p><?php echo htmlspecialchars($report['コメント']) ?></p>
+            <div class="kome"><?php echo htmlspecialchars($report['コメント']) ?></div>
 
             <div class="small">
                 <p>投稿主：<?php echo htmlspecialchars($report['通報者']) ?></p>
