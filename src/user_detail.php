@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 
 // ログイン情報（仮）
 $user_id   = $_SESSION['user_id'] ?? ($_GET['user_id'] ?? '');
@@ -76,7 +76,7 @@ foreach ($reviews as $r) {
       <img src="<?= $store['photo'] ?>" alt="店舗外観">
 
       <!-- 店舗登録者のみ編集ボタンを表示 -->
-      <?php if ($store['owner_id'] === $user_id): ?>
+      <?php if ($_SESSION['usertype_id'] === 9): ?>
         <p><a href="store_edit.php?store_id=<?= urlencode($store['store_id']) ?>" class="btn">店舗情報編集</a></p>
       <?php endif; ?>
     </div>
