@@ -75,11 +75,18 @@ $reports = array(
     }
     .star{
         display: flex;
-        background-color: red;
+        gap:0.2px;
     }
 
     .kome{
-        border:0.5px solid;
+        border: 1px solid #999;
+        padding: 8px;      
+        margin-top: 5px;   
+        border-radius: 5px;
+    }
+
+    .small{
+        font-size:12px
     }
 
 
@@ -101,7 +108,6 @@ $reports = array(
 
         <div class="left">
             <h3><?php echo htmlspecialchars($report['アカウント名']) ?></h3>
-
             <div class="star">
                 <div>評価：</div>
                 <?php for ($i = 1; $i <= 5; $i++): ?>
@@ -109,8 +115,9 @@ $reports = array(
                 <?php endfor; ?>
                 <div><?php echo $report['評価点']?></div>
             </div>
-
-            <div class="kome"><?php echo htmlspecialchars($report['コメント']) ?></div>
+            <div class="kome">
+                <div><?php echo htmlspecialchars($report['コメント']) ?></div>
+            </div>
 
             <div class="small">
                 <p>投稿主：<?php echo htmlspecialchars($report['通報者']) ?></p>
