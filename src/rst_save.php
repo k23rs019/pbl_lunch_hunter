@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'model.php';
 
 $error = false;
@@ -26,7 +25,7 @@ if(!$error){
     $pay = isset($_POST['payment']) ? array_sum($_POST['payment']) : 0;
 
     // ファイル処理
-    $photo_file = null;
+    $photo_file = '';
     if(isset($_FILES['photo_file']) && $_FILES['photo_file']['error'] === UPLOAD_ERR_OK){
         $upload_dir = 'uploads/';
         if(!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
@@ -42,11 +41,10 @@ if(!$error){
         'end_time'=> $_POST['close_time'],
         'tel_num'=> $tel_num,
         'rst_holiday'=> $holiday,
-        'rst_genre'=> $genre,
         'rst_pay'=> $pay,
-        'rst_'=> $_POST['url'] ?? null,
-        'photo'=> $photo_file,
-        'user_id'=> $_POST['user_id'],
+        'rst_info'=> $_POST['url'] ?? '',
+        'photo1'=> $photo_file,
+        'user_id'=> $_SESSION['user_id'],
         'discount'=> 0
     ];
 
