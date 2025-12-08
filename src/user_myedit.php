@@ -1,4 +1,4 @@
-<h3>ユーザー情報編集</h3>
+<h3>ユーザー情報登録</h3>
 <form action="?do=user_myedit_save" method="post">
 <table class="table table-hover">
 <tr><td>ユーザ名変更：</td><td><input type="text" name="user_account" class="form-control"></td></tr>
