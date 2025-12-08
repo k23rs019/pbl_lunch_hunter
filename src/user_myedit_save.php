@@ -10,7 +10,7 @@ function showError($message) {
 $user_id = $_SESSION['user_id'];
 
 //myeditの入力を受け取り
-$user[] = array(
+$user = array(
     'user_account' => $_POST['user_account'],
     'password' => $_POST['newpass'],
 );
@@ -23,7 +23,7 @@ if($pass == $_SESSION['user_password']){
     //新規パスワードが一致しているかを確認
     if($newpass == $newpasscheck){
         //送信データを保存
-        $model ->update($user,"user_id=".$user_id);
+        $model ->update($user,"user_id='{$user_id}'");
         //echo 'OK!';
         //header('Location:?do=user_myedit');
     }else{
@@ -41,6 +41,6 @@ showError('既存パスワードが違います。');
 //遷移
 //header('Location:?do=user_myedit');
 header('Location:?do=user_myedit');
-
+exit;
 
 ?>
