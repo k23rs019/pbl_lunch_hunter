@@ -9,9 +9,9 @@ $user = $model->getDetail("user_id='" . $user_id . "'");
 // 更新処理
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     $data = [
-        'user_name' => $_POST['user_name'],
-        'user_kana' => $_POST['user_kana'],
-        'account_name' => $_POST['account_name']
+        'user_name'    => $_POST['user_name'] ?? '',
+        'user_kana'    => $_POST['user_kana'] ?? '',
+        'account_name' => $_POST['account_name'] ?? ''
     ];
     $where = "user_id='" . $user_id . "'";
     $model->update($data, $where);
@@ -31,7 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password'])) {
     echo "<script>alert('パスワードを初期化しました');</script>";
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -52,7 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password'])) {
       background: #fff; padding: 20px; border-radius: 8px; text-align: center;
     }
     #popup_box button { margin: 10px; }
-
   </style>
 </head>
 <body>
@@ -60,27 +58,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password'])) {
   <?php if ($user): ?>
   <form method="post">
     <label for="user_id">ユーザーID</label>
-    <input type="text" id="user_id" name="user_id" value="<?= htmlspecialchars($user['user_id']) ?>" readonly class="readonly">
+    <input type="text" id="user_id" name="user_id" value="<?= htmlspecialchars($user['user_id'] ?? '') ?>" readonly class="readonly">
 
     <label for="account_name">アカウント名</label>
-    <input type="text" id="account_name" name="account_name" value="<?= htmlspecialchars($user['user_account'] ?? '') ?>">
+    <input type="text" id="account_name" name="account_name" value="<?= htmlspecialchars($user['account_name'] ?? '') ?>">
 
     <label for="user_name">氏名</label>
-    <input type="text" id="user_name" name="user_name" value="<?= htmlspecialchars($user['user_name']) ?>">
+    <input type="text" id="user_name" name="user_name" value="<?= htmlspecialchars($user['user_name'] ?? '') ?>">
 
     <label for="user_kana">氏名（カナ）</label>
-    <input type="text" id="user_kana" name="user_kana" value="<?= htmlspecialchars($user['user_kana']) ?>">
-
+    <input type="text" id="user_kana" name="user_kana" value="<?= htmlspecialchars($user['user_kana'] ?? '') ?>">
 
     <div style="margin-top:20px;">
       <button type="submit" name="update">編集</button>
-      <button type="submit" name="reset_password">パスワードリセット</button>
+      <!-- パスワードリセットは確認ポップアップを経由 -->
+      <button type="button" onclick="show_reset_popup()">パスワードリセット</button>
       <button type="button" onclick="window.location.href='user_list_admin.php'">戻る</button>
     </div>
   </form>
   <?php else: ?>
     <p>ユーザーが見つかりません。</p>
   <?php endif; ?>
+
   <!-- パスワードリセット確認ポップアップ -->
   <div id="popup_overlay">
     <div id="popup_box">
@@ -102,4 +101,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password'])) {
   </script>
 </body>
 </html>
-

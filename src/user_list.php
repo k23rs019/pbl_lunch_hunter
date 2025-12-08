@@ -37,7 +37,7 @@ $accounts = [
 
 <div class="filter-box">
     <label><input type="radio" name="sort" value="id"> ユーザーID順</label>
-    <label><input type="radio" name="sort" value="address"> 住所順</label>
+    <label><input type="radio" name="sort" value="address"> 五十順</label>
     <label><input type="checkbox" name="suspended"> 停止済みアカウント</label>
 </div>
 

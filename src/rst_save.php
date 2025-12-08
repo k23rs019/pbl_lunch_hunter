@@ -4,49 +4,67 @@ require_once 'model.php';
 $error = false;
 
 // 必須項目チェック
-if(empty($_POST['rst_name'])
-|| empty($_POST['rst_address'])
-|| empty($_POST['start_time'])
-|| empty($_POST['end_time'])
-|| empty($_POST['tel_num']) 
-|| empty($_POST['rst_holiday'])
-|| empty($_POST['rst_genre']))
-{
-    $error = true;
+$required_fields = ['store_name','address','open_time','close_time','tel_part1','tel_part2','tel_part3','holiday','genre'];
+foreach($required_fields as $field){
+    if(empty($_POST[$field])){
+        $error = true;
+        break;
+    }
 }
 
+// 電話番号結合
+$tel_num = $_POST['tel_part1'] . $_POST['tel_part2'] . $_POST['tel_part3'];
+
+// エラーがなければ登録処理
 if(!$error){
     $rst_save = new Restaurant();
 
-    // 定休日を合計
-    $holiday = array_sum($_POST['rst_holiday'] ?? []);
+    // 定休日・ジャンル・支払方法の合計（ビットフラグ）
+    $holiday = array_sum($_POST['holiday'] ?? []);
+    $genre = array_sum($_POST['genre'] ?? []);
+    $pay = isset($_POST['payment']) ? array_sum($_POST['payment']) : 0;
 
+    // ファイル処理
+    $photo_file = '';
+    if(isset($_FILES['photo_file']) && $_FILES['photo_file']['error'] === UPLOAD_ERR_OK){
+        $upload_dir = 'uploads/';
+        if(!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+        $photo_file = basename($_FILES['photo_file']['name']);
+        move_uploaded_file($_FILES['photo_file']['tmp_name'], $upload_dir . $photo_file);
+    }
+
+    // 登録データ
     $data = [
-        'rst_name'=> $_POST['rst_name'],
-        'rst_address'=> $_POST['rst_address'],
-        'start_time'=> $_POST['start_time'],
-        'end_time'=> $_POST['end_time'],
-        'tel_num'=> $_POST['tel_num'],
+        'rst_name'=> $_POST['store_name'],
+        'rst_address'=> $_POST['address'],
+        'start_time'=> $_POST['open_time'],
+        'end_time'=> $_POST['close_time'],
+        'tel_num'=> $tel_num,
         'rst_holiday'=> $holiday,
-        'rst_pay'=> isset($_POST['rst_pay']) ? array_sum($_POST['rst_pay']) : null,
-        'rst_info'=> $_POST['rst_info'] ?? null,
-        'photo_file'=> $_POST['photo_file'] ?? null,
-        'user_id'=> $_POST['user_id'],
-        'discount'=> false
+        'rst_pay'=> $pay,
+        'rst_info'=> $_POST['url'] ?? '',
+        'photo1'=> $photo_file,
+        'user_id'=> $_SESSION['user_id'],
+        'discount'=> 0
     ];
 
-    // データ登録
+    // データベースに登録
     $rows = $rst_save->insert($data);
-    $genre = $_POST['rst_genre'];
-    $rst_id = $rst_save->getDetail(["'rst_name' = '{$data['rst_name']}'"]);
-    $rows = $rst_save->save_genre($rst_id,$genre);
-    // 登録成功か判定
-    if($rows > 0){
-        $_SESSION['message'] = "店舗が登録されました。";
-    } else {
-        $_SESSION['message'] = "登録に失敗しました。";
+
+    // 登録した店舗のIDを取得
+    $rst_detail = $rst_save->getDetail(['rst_name' => $data['rst_name']]);
+    $rst_id = $rst_detail['rst_id'] ?? null;
+
+    // ジャンル保存
+    $genre_array = $_POST['genre'] ?? [];
+    if($rst_id !== null){
+        $rows = $rst_save->save_genre($rst_id, $genre_array);
     }
-    // 登録結果ページまたは一覧ページへ遷移
+
+    // 結果メッセージ
+    $_SESSION['message'] = $rows > 0 ? "店舗が登録されました。" : "登録に失敗しました。";
+
+    // 店舗一覧ページに遷移
     header('Location:?do=rst_list');
     exit();
 

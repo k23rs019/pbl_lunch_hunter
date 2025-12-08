@@ -87,8 +87,9 @@ class Model
      */
     public function insert($data)
     {
-        $keys = implode(',', array_keys($data));
-        $values = array_map(fn ($v) => is_string($v) ? "'{$v}'" : $v, array_values($data));
+        if(empty($data)) die('INSERT用データが空です');
+        $keys = implode(',', array_map(fn($k) => "`$k`", array_keys($data)));
+        $values = array_map(fn($v) => is_string($v) ? "'" . $this->db->real_escape_string($v) . "'" : $v, array_values($data));
         $values = implode(",", $values);
         $sql = "INSERT INTO {$this->table} ($keys) VALUES ($values)";
         $this->execute($sql);
