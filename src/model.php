@@ -102,10 +102,12 @@ class Model
      */
     public function update($data, $where)
     {
-        $keys = array_keys($data);
-        $values = array_map(fn ($v) => is_string($v) ? "'{$v}'" : $v, array_values($data));
-        $values = array_map(fn ($k, $v) => "{$k}={$v}", array_combine($keys, $values));
-        $setStr = implode(',',$values);
+        $setParts = [];
+        foreach ($data as $k => $v) {
+            $v = is_string($v) ? "'{$v}'" : $v;
+            $setParts[] = "{$k}={$v}";
+        }
+        $setStr = implode(',', $setParts);
         if (is_array($where)) {
             $whereParts = [];
             foreach ($where as $key => $value) {
