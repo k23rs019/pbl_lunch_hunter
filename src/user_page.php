@@ -117,9 +117,9 @@ $shops=array(
             </div>
         </div>
     </div>
+<div class="shop">
 <?php foreach ($shops as $shop): ?>
     <!--投稿店舗-->
-    <div class="shop">
         <div class="item">
             <div class="shopi">
                 <h4>店舗名:<?php echo $shop['店舗名'] ?></h4>
