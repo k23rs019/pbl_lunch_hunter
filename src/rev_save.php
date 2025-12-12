@@ -22,7 +22,16 @@ $rst_id = $_POST['rst_id'] ?? null;
 
 // モード別処理
 switch ($mode) {
-
+    case 'update':
+        //編集
+        $review_id = $_POST['review_id'];
+        $data = [
+            'eval_point' => $_POST['point'], 'review_comment' => $_POST['comment'] ?? null, 'rst_id' => $_POST['rst_id'], 'user_id' => $_POST['user_id'], 'photo1' => readBlob(0), 'photo2' => readBlob(1), 'photo3' => readBlob(2), 'rev_state' => true
+        ];
+        //print_r($_FILES);
+        //print_r($data);
+        $review_save->update($data, 'review_id=' . $review_id);
+        break;
         // ★ 新規作成
     case 'create':
         $data = [
