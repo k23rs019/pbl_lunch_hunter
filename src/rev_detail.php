@@ -1,28 +1,3 @@
-
-<!--
-<div class="kuchokomi">
-    <h1>口コミ個別表示</h1>
-    <button>戻る</button>
-    <button popovertarget="confirm">通報</button>
-    <div id="confirm" popover>
-        <div>通報理由</div>
-        <div>どちらか一つを選択してください。</div>
-        <div class="pop-btn-area">
-            <div>
-                <label>
-                    <input type="radio">写真
-                </label>
-                <label>
-                    <input type="radio">コメント
-                </label>
-            </div>
-            <div>本当に通報しますか。</div>    
-            <button onclick="location.href='rev_report.php?id=1'">yes</butto>
-            <button popovertarget="confirm" popovertargetaction="hide">no</button>
-        </div>
-    </div>
-</div>
--->
 <!-- 通報ボタン -->
 <style>
 /* --- モーダル背景 --- */
@@ -84,6 +59,13 @@ function submitReport() {
 
     form.submit();
 }
+
+function confirmHide(id) {
+    if (confirm("本当に非表示にしますか？")) {
+        document.getElementById("hideForm" + id).submit();
+    }
+}
+
 </script>
 <?php
 //確認リンク http://localhost/dashboard/pbl_lunch_hunter/index.php?do=rev_detail&rid=0001
@@ -94,8 +76,8 @@ $modelU = new user();
 $review_id = $_GET['rev_id'];
 //レビューをリンクから取得
 $review = $modelR -> getDetail("review_id =". $review_id);
-print_r($review);
-echo $review['review_id'];
+//print_r($review); //デバッグ
+//echo $review['review_id'];
 //レビューから口コミ投稿者の名称を取得
 $user = $modelU -> getDetail("user_id='".$review['user_id']."'");
 ?>
@@ -107,7 +89,12 @@ if($_SESSION['usertype_id']==1){
     <button type="button" onclick="openModal()">通報する</button>
 </form>';
 }elseif($_SESSION['usertype_id']==9){
-    echo '<button><a href="?do=rst_detail">非表示</a></button>';
+    echo '<form id="hideForm' . $review['review_id'] . '" method="POST" action="?do=rev_save" style="display:none;">';
+    echo '<input type="hidden" name="review_id" value="' . $review['review_id'] . '">';
+    echo '<input type="hidden" name="rst_id" value="'.$review['rst_id'].'">';
+    echo '<input type="hidden" name="order" value="3">';
+    echo '</form>';
+    echo '<button onclick="confirmHide(' . $review['review_id'] . ')">非表示</button>';
 }
 # localhost\dashboard\pbl_lunch_hunter\src\rev_detail.php
 
@@ -148,25 +135,25 @@ if($_SESSION['usertype_id']==1){
 </div>
 <div>
     <?php
-    if (!empty($row['photo'])) {
+    if (!empty($review['photo1'])) {
         $img64 = base64_encode($review['photo1']);
-        $mime  = $row['mime_type'];  // 例： image/jpeg, image/png
+        $mime  = 'image/webp';  // 例： image/jpeg, image/png
 
         echo '<img src="data:' . $mime . ';base64,' . $img64 . '" style="max-width:300px;" />';
     } else {
         echo "画像なし";
     }
-    if (!empty($row['photo3'])) {
-        $img64 = base64_encode($review['photo1']);
-        $mime  = $row['mime_type'];  // 例： image/jpeg, image/png
+    if (!empty($review['photo2'])) {
+        $img64 = base64_encode($review['photo2']);
+        $mime  = 'image/webp';  // 例： image/jpeg, image/png
 
         echo '<img src="data:' . $mime . ';base64,' . $img64 . '" style="max-width:300px;" />';
     } else {
         echo "画像なし";
     }
-    if (!empty($row['photo3'])) {
-        $img64 = base64_encode($review['photo1']);
-        $mime  = $row['mime_type'];  // 例： image/jpeg, image/png
+    if (!empty($review['photo3'])) {
+        $img64 = base64_encode($review['photo3']);
+        $mime  = 'image/webp'; // 例： image/jpeg, image/png
 
         echo '<img src="data:' . $mime . ';base64,' . $img64 . '" style="max-width:300px;" />';
     } else {
