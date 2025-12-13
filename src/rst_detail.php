@@ -1,14 +1,35 @@
-<!--
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
--->
+<?php
+//初期処理
+
+require_once('model.php');
+$user = new User();
+$restaurant = new Restaurant();
+$review = new Review();
+$fav = new Favorite();
+
+//レビューをリンクから取得
+$rst_id = ['rst_id' => $_GET['rst_id']];
+$rstdata = $restaurant -> get_RstDetail($rst_id);
+//print_r($rstdata);
+//$rst_holiday = 
+//$rst_pay =
+
+$rvlist = $review->getList("rst_id=".$rst_id['rst_id'].'&&rev_state=1');
+//print_r($rvlist);
+$userlist = $user->getList();
+//print_r($userlist);
+
+//ユーザーリスト
+$userMap = [];
+foreach ($userlist as $u) {
+    $userMap[$u["user_id"]] = $u["user_account"];
+}
+
+// --- お気に入り状態チェック ---
+$where = "user_id='".$_SESSION['user_id']."' AND rst_id='".$rst_id['rst_id']."'";
+$exists = $fav->getList($where);
+$isFav = count($exists) > 0;
+?>
 <style>
     /*グラフ*/
     .graph-row {
@@ -109,58 +130,75 @@
         overflow: hidden;
         white-space: nowrap;
     }
+
+    .fav-area {
+        text-align: right;   /* 右寄せ */
+        margin: 10px 0;      /* 上下の余白（お好みで） */
+    }
+
+    .heart-btn {
+        background: none;
+        border: none;
+        font-size: 40px;    /* 大きく */
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .heart-on {
+        color: red;
+    }
+
+    .heart-off {
+        color: white;
+        -webkit-text-stroke: 2px red;
+    }
 </style>
-<?php
-//初期処理
 
-require_once('model.php');
-$user = new User();
-$restaurant = new Restaurant();
-$review = new Review();
-
-//レビューをリンクから取得
-$rst_id = ['rst_id' => $_GET['rst_id']];
-$rstdata = $restaurant -> get_RstDetail($rst_id);
-//print_r($rstdata);
-//$rst_holiday = 
-//$rst_pay =
-
-$rvlist = $review->getList("rst_id=".$rst_id['rst_id'].'&&rev_state=1');
-//print_r($rvlist);
-$userlist = $user->getList();
-//print_r($userlist);
-
-//ユーザーリスト
-$userMap = [];
-foreach ($userlist as $u) {
-    $userMap[$u["user_id"]] = $u["user_account"];
-}
-?>
 <h1 style="text-align:center;">店舗詳細</h1>
 <div>
     ＜<a href="?do=rst_list">戻る(店舗一覧)</a>
+    <div style="text-align: right; font-size: 35px; margin-bottom: 10px;">
     <?php
     if($_SESSION['usertype_id']==1){
         if($_SESSION['user_id']==$rstdata['user_id']){  
-            echo '<a href="?do=rst_edit&rst_id='.$rst_id['rst_id'].'" class=btn>編集</a>';
+            echo '<a href="?do=rst_edit&rst_id=' . $rst_id['rst_id'] . '" class="btn btn-info btn-lg">編集</a>';
         }
-        echo '<button style="text-align:right;">お気に入り</button>';
+    ?>
+
+            <?php if ($isFav): ?>
+                <!-- 登録済み（赤ハート） -->
+                <a href="?do=rst_favsave&rst_id=<?= $rst_id['rst_id'] ?>&mode=delete" style="color: red; text-decoration: none;">
+                    ♥
+                </a>
+            <?php else: ?>
+                <!-- 未登録（枠の赤ハート） -->
+                <a href="?do=rst_favsave&rst_id=<?= $rst_id['rst_id'] ?>&mode=add" style="color: red; text-decoration: none;">
+                    ♡
+                </a>
+            <?php endif; ?>
+    <?php
     }elseif($_SESSION['usertype_id']==9){  
-        echo '<a href="?do=rst_edit&rst_id='.$rst_id['rst_id'].'" class=btn>編集</a>';
+        echo '<a href="?do=rst_edit&rst_id=' . $rst_id['rst_id'] . '" class="btn btn-info btn-lg">編集</a>';
     }
     ?>
+    </div>
     
 </div>
 <br>
 <div class="shopinfo">
     <h2><?php echo $rstdata['rst_name']; ?></h2>
-    <table border="1">
+    <table border="1" width="100%" style="table-layout:fixed;">
         <tr>
             <td>
-                <table border="2">
+                <table border="2" width="100%" style="table-layout:fixed;">
+                    <colgroup>
+                        <col style="width: 100px;">    
+                        <col style="width: auto;">   
+                    </colgroup>
                     <tr>
                         <td><div>住所</div></td>
-                        <td><?php echo $rstdata['rst_address']?></td>
+                        <td ><?php echo $rstdata['rst_address']?></td>
                     </tr>
                     <tr>
                         <td><div>電話番号</div></td>
@@ -197,7 +235,16 @@ foreach ($userlist as $u) {
 
             <!-- ここが画像のセル（右側） -->
             <td style="text-align:center;">
-                <img src="" alt="未登録" style="max-width:200px;">
+                <?php
+                if (!empty($rstdata['photo1'])) {
+                    $img64 = base64_encode($rstdata['photo1']);
+                    $mime  = 'image/webp';  // 例： image/jpeg, image/png
+
+                    echo '<img src="data:' . $mime . ';base64,' . $img64 . '" style="max-width:300px;" />';
+                } else {
+                    echo "画像なし";
+                }
+                ?>
             </td>
         </tr>
     </table>
@@ -268,6 +315,7 @@ $maxCount = max($ratingCount);
         </tr>
     </table>
 </div><br>
+<hr>
 <?php if ($_SESSION['usertype_id'] == 1) { ?>
 <div class="shop-point">
     <form action="?do=rev_save" method="post" enctype="multipart/form-data">
@@ -277,22 +325,22 @@ $maxCount = max($ratingCount);
                 <h2>評価</h2>
                 <div class="point">
                     <!-- 星は右から並べる -->
-                    <input type="radio" id="star5" name="point" value="5">
+                    <input type="radio" id="star5" name="eval_point" value="5">
                     <label for="star5">★</label>
 
-                    <input type="radio" id="star4" name="point" value="4">
+                    <input type="radio" id="star4" name="eval_point" value="4">
                     <label for="star4">★</label>
 
-                    <input type="radio" id="star3" name="point" value="3">
+                    <input type="radio" id="star3" name="eval_point" value="3">
                     <label for="star3">★</label>
 
-                    <input type="radio" id="star2" name="point" value="2">
+                    <input type="radio" id="star2" name="eval_point" value="2">
                     <label for="star2">★</label>
 
-                    <input type="radio" id="star1" name="point" value="1">
+                    <input type="radio" id="star1" name="eval_point" value="1">
                     <label for="star1">★</label>
                 </div><br>
-                <textarea name="comment" class="big-textarea" placeholder="コメントを入力してください"></textarea>
+                <textarea name="review_comment" class="big-textarea" placeholder="コメントを入力してください"></textarea>
             </div>
             <div class="col-xs-4">
                 <div class="phot">
@@ -339,17 +387,18 @@ foreach ($rvlist as $rv) {
 ?>
 <?php if ($hasReview): ?>
     <input type="hidden" name="review_id" value="<?= $myreview_id ?>">
-    <input type="hidden" name="order" value="2">
-    <input type="submit" value="編集" class="btn btn-primary link-white">
+    <input type="hidden" name="mode" value="update">
+    <input type="submit" value="編集" class="btn btn-primary link-white btn-lg">
 <?php else: ?>
-    <input type="hidden" name="order" value="1">
-    <input type="submit" value="登録" class="btn btn-primary link-white">
+    <input type="hidden" name="mode" value="create">
+    <input type="submit" value="登録" class="btn btn-primary link-white btn-lg">
 <?php endif; ?>
 
-<a href="?do=rev_save" class="btn btn-danger link-white">削除</a>
+<a href="?do=rev_save" class="btn btn-danger link-white btn-lg">削除</a>
 </form>
 </div>
 <?php } ?>
+<hr>
 <div>
 
     <h2>口コミ</h2>
@@ -415,10 +464,9 @@ foreach ($rvlist as $rv) {
 
                     <!-- コメント -->
                     <div class="comment-box mb-2">
-                        <?= nl2br(htmlspecialchars(mb_substr($review["review_comment"], 0, 20))) ?>
-                        <?= (mb_strlen($review["review_comment"]) > 20 ? "..." : "") ?>
+                        <?= nl2br(htmlspecialchars(mb_substr($review["review_comment"] ?? '', 0, 20))) ?>
+                        <?= (mb_strlen($review["review_comment"] ?? '') > 20 ? "..." : "") ?>
                     </div>
-
                     <!-- 詳細ボタン -->
                     <a href="?do=rev_detail&rid=<?= $rid ?>" class="btn btn-primary w-100">
                         詳細を見る

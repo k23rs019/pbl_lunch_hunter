@@ -15,6 +15,7 @@ $no_header_ouput =[
     ,'user_input_save'
     ,'user_myedit_save'
     ,'rev_detail_rpsave'
+    ,'rst_favsave'
 ];
 
 if(isset($_SESSION['usertype_id'])){

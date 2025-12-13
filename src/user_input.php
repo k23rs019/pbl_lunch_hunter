@@ -1,4 +1,4 @@
-<h3>ユーザー情報編集</h3>
+<h3>ユーザー情報登録</h3>
 
 <form action="?do=user_input_save" method="post">
 <table class="table table-hover">
