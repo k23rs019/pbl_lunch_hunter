@@ -125,7 +125,6 @@ if($_SESSION['usertype_id']==1){
         if (!empty($review['photo2'])) {
             $img64 = base64_encode($review['photo2']);
             $mime  = 'image/webp';  // 例： image/jpeg, image/png
-
             echo '<img src="data:' . $mime . ';base64,' . $img64 . '" style="max-width:300px;" />';
         } else {
             echo '<img src="png\noimage.png" style="max-width:100px;" />';

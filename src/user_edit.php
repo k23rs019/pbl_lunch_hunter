@@ -70,13 +70,18 @@ button { margin-top: 15px; padding: 10px 15px; }
 
   <!-- ================= 操作ボタン群 ================= -->
   <div style="display:flex; gap:20px;">
-
+    <?php if($user['usertype_id']==9){ ?>
+      <button type="button" class="btn btn-info" onclick="location.href='?do=user_myedit'">
+        管理者パスワード編集
+      </button>
+    <?php }else{ ?>
     <!-- パスワードリセット（表示のみ） -->
     <button type="button" onclick="show_reset_popup()" class="btn btn-default">
       パスワードリセット
     </button>
 
     <!-- 停止 / 再開 -->
+
     <form action="?do=user_save" method="post">
       <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
       <?php if ($user['usertype_id'] == 1) : ?>
@@ -87,7 +92,7 @@ button { margin-top: 15px; padding: 10px 15px; }
         <button type="submit" class="btn btn-success btn-lg">アカウント再開</button>
       <?php endif; ?>
     </form>
-
+    <?php } ?>
   </div>
 
 <?php else : ?>

@@ -22,7 +22,7 @@ if (!empty($_GET['msg'])) {
 
 <h1 style="text-align:center;">ユーザー情報登録</h1>
 
-<form action="?do=user_save" method="post">
+<form action="?do=user_save" method="post" id="userForm">
 
 <div class="modal fade" id="confirmModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
@@ -74,10 +74,20 @@ if (!empty($_GET['msg'])) {
 </form>
 
 <script>
-  function show_popup() {
-    document.getElementById("popup_overlay").style.display = "flex";
+function show_popup() {
+  const form = document.getElementById("userForm");
+
+  // HTML5バリデーション実行
+  if (!form.checkValidity()) {
+    form.reportValidity(); // エラーメッセージ表示
+    return; // ポップアップ出さない
   }
-  function hide_popup() {
-    document.getElementById("popup_overlay").style.display = "none";
-  }
+
+  // 問題なければポップアップ表示
+  document.getElementById("popup_overlay").style.display = "flex";
+}
+
+function hide_popup() {
+  document.getElementById("popup_overlay").style.display = "none";
+}
 </script>
