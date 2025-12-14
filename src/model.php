@@ -273,7 +273,7 @@ class User extends Model
 
     function auth($uid, $upass)
     {
-        return $this->getDetail("uid='{$uid}' AND upass='{$upass}'");
+        return $this->getDetail("user_id='{$uid}' AND password='{$upass}'");
     }
     //姓名結合
     function username($user)
