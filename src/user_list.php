@@ -7,7 +7,14 @@ $search_key = $_GET['q'] ?? '';
 $sort       = $_GET['sort'] ?? '';
 $stop_user  = isset($_GET['stop_user']);
 
-$user_list = $user->get_userlist_filtered($search_key, $stop_user, $sort);
+$per_page = 20;
+
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$offset = ($page - 1) * $per_page;
+
+$user_list = $user->get_userlist_filtered($search_key, $stop_user, $sort, $per_page, $offset);
+
+$page        = max(1, (int)($_GET['page'] ?? 1));
 ?>
 
 <style>
@@ -149,13 +156,25 @@ $end_page   = min($total_pages, $page + $range);
 $params = $_GET;
 unset($params['page']); // pageだけは置き換え
 $base_url = '?' . http_build_query($params);
+
+if ($page <= 2) {
+    // 最初のページ付近
+    $start_page = 1;
+    $end_page   = min(3, $total_pages);
+
+} elseif ($page >= $total_pages - 1) {
+    // 最後のページ付近
+    $start_page = max(1, $total_pages - 2);
+    $end_page   = $total_pages;
+
+} else {
+    // 真ん中
+    $start_page = $page - 1;
+    $end_page   = $page + 1;
+}
 ?>
 
 <div class="pagination">
-    <?php if ($page > 1) : ?>
-        <a href="<?= $base_url ?>&page=<?= $page - 1 ?>">« 前</a>
-    <?php endif; ?>
-
     <?php if ($start_page > 1) : ?>
         <a href="<?= $base_url ?>&page=1">1</a>
         <?php if ($start_page > 2) echo '...'; ?>
@@ -173,9 +192,5 @@ $base_url = '?' . http_build_query($params);
     <?php if ($end_page < $total_pages) : ?>
         <?php if ($end_page < $total_pages - 1) echo '...'; ?>
         <a href="<?= $base_url ?>&page=<?= $total_pages ?>"><?= $total_pages ?></a>
-    <?php endif; ?>
-
-    <?php if ($page < $total_pages) : ?>
-        <a href="<?= $base_url ?>&page=<?= $page + 1 ?>">次 »</a>
     <?php endif; ?>
 </div>

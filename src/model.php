@@ -308,7 +308,7 @@ class User extends Model
         $user['userkana'] = $this->userkana($user);
         return $user;
     }
-    public function get_userlist_filtered($search_key = '', $stop_user = false, $orderby = null)
+    public function get_userlist_filtered($search_key = '', $stop_user = false, $orderby = null, $limit = 0, $offset = 0)
     {
         $where = [];
 
@@ -338,7 +338,7 @@ class User extends Model
         }
 
         // get_userlist に渡す
-        return $this->get_userlist($where, $order);
+        return $this->get_userlist($where, $order, $limit, $offset);
     }
 
 
